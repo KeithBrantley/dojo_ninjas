@@ -29,14 +29,17 @@
         {% csrf_token %}
         <h1>Add a Ninja</h1>
         <div class="dojo_input_section">
-            <div class="ninja_sectopm">
+            <div class="ninja_section">
                 <label for="first_name">First Name</label>
                 <input type="text" name="first_name" id="first_name"><br>
                 <label for="last_name">Last Name</label>
                 <input type="text" name="last_name" id="last_name"><br>
-                <label for="select a dojo">Dojo</label>
-                <select name="dojo" id="select a dojo">
-                    <option value="0">-select a dojo-</option>
+                <label for="dojo">Dojo</label>
+                <select name="dojo" id="dojo">
+                    <!-- <option value="0">-select a dojo-</option> -->
+                    {% for dojo in all_dojos %}
+                        <option value="{{dojo.id}}">{{dojo.name}}</option>
+                    {% endfor %}
                 </select><br>
                 <button>Add</button>
             </div>
@@ -45,17 +48,24 @@
     <hr>
     <div>
         <h1>All the Dojos</h1>
-        <p>Ninjas at the Painting Dojo</p>
-        {% for dojo in all_dojos %}
-        <p>{{ dojo.name }} - {{ dojo.state}}</p>
-        <p>{{ dojo.ninjas.all}}</p>
-        {% endfor %}
-        <p>Ninjas at the Architecture Dojo</p>
-        {% for ninja in all_ninjas %}
-        <p>{{ ninja.first_name}} - {{ninja.last_name}}</p>
-        {% endfor %}
+        <ul>
+            {% for dojo in all_dojos %}
+            <form action="/delete_dojo/{{dojo.id}}" method="POST">
+                {% csrf_token %}
+                <li>
+                    <ul>
+                        <h3>Ninjas at the {{ dojo.name }} in {{ dojo.state }}</h3>
+                        <button type="submit">Delete</button>
+                        {% for ninja in dojo.ninja.all %}
+                            <li>{{ ninja.first_name }} {{ ninja.last_name }}</li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            </form>
+            {% endfor %}
+        </ul>
     </div>
-    
+
 </body>
 
 </html>
